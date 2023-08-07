@@ -1,6 +1,4 @@
-"use client";
 import React from "react";
-import { useState } from "react";
 import { AiOutlineUser } from "react-icons/ai";
 import { AiOutlineLock } from "react-icons/ai";
 const LoginCard = (props) => {
