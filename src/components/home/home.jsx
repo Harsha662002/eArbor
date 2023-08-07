@@ -1,16 +1,50 @@
-// import Image from "next/image";
 import { useState } from "react";
-import { AiOutlineUser } from "react-icons/ai";
-import { AiOutlineLock } from "react-icons/ai";
 import LoginCard from "../logincards/logincard.jsx";
-export default function Home() {
+import { useNavigate } from "react-router-dom";
+
+function Home() {
   const [activeDiv, setActiveDiv] = useState("employee");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleClick = (div) => {
     setActiveDiv((prevActiveDiv) => (prevActiveDiv === div ? null : div));
   };
+
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+    console.log("email", email);
+    console.log("password", password);
+  };
+
+  const handleLoginAdmin = async (e) => {
+    e.preventDefault();
+    console.log("{ email, password }", email, password);
+    try {
+      const response = await fetch(
+        "https://earbor-server.vercel.app/api/admin-login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      if (response.ok) {
+        alert("Admin login successful");
+        navigate("/admin");
+      } else {
+        console.log("reess", response.status);
+        console.error("Admin login failed", response);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <div className="flex justify-center items-center h-screen bg-cover bg-center bg-no-repeat">
       <div className="flex flex-col bg-white shadow-2xl  justify-center w-96">
@@ -33,13 +67,12 @@ export default function Home() {
           </div>
         </div>
         <div className="mb-4 flex justify-center">
-          {/* <img
+          <img
             src="/assests/images/logo.png"
-            priority={true}
-            alt="logo"
             height={200}
             width={200}
-          ></Image> */}
+            alt="earbor_logo"
+          ></img>
         </div>
         {activeDiv === "employee" && (
           <LoginCard
@@ -54,11 +87,7 @@ export default function Home() {
               else if (e.target.name === "password")
                 setPassword(e.target.value);
             }}
-            // onLoginClick={(e) => {
-            //   e.preventDefault();
-            //   console.log("email", email);
-            //   console.log("password", password);
-            // }}
+            onLoginClick={handleLoginSubmit}
           />
         )}
         {activeDiv === "admin" && (
@@ -74,14 +103,12 @@ export default function Home() {
               else if (e.target.name === "password")
                 setPassword(e.target.value);
             }}
-            // onLoginClick={(e) => {
-            //   e.preventDefault();
-            //   console.log("email", email);
-            //   console.log("password", password);
-            // }}
+            onLoginClick={handleLoginAdmin}
           />
         )}
       </div>
     </div>
   );
 }
+
+export default Home;
